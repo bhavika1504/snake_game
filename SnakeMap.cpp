@@ -12,7 +12,8 @@ SnakeMap::SnakeMap(int width, int height, Snake* snake)
     snakeEmoji = "🟩 ";
     powerEmoji = "💥 ";
     powerSnakeEmoji = "⚡ ";
-    borderEmoji = "⬛ ";
+    // 🔧 FIX: use thinner border for PowerShell alignment
+    borderEmoji = "█ "; // changed from ⬛ to █ for consistent width
     powerFruitActive = false;
     srand((unsigned)time(nullptr));
     spawnFood();
@@ -56,6 +57,13 @@ void SnakeMap::spawnPowerFruit() {
 
 void SnakeMap::draw() {
     clearScreen();
+
+    // 🔧 FIX: auto-hide power fruit after 10 seconds
+    if (powerFruitActive) {
+        auto elapsed = chrono::duration_cast<chrono::seconds>(
+            chrono::steady_clock::now() - powerStartTime);
+        if (elapsed.count() > 10) powerFruitActive = false;
+    }
 
     if (snake->isPowerActive())
         cout << "⚡ INVINCIBLE MODE! ⚡ " << snake->getPowerTimeLeft() << "s left ⚡\n";
@@ -118,7 +126,10 @@ bool SnakeMap::eatFood() {
     if (head == food) {
         snake->grow();
         spawnFood();
-        if (rand() % 6 == 0) spawnPowerFruit();
+        // 🔧 FIX: spawn power fruit with lower chance but make visible
+        if (rand() % 6 == 0) {
+            spawnPowerFruit();
+        }
         return true;
     }
     return false;

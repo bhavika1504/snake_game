@@ -1,36 +1,27 @@
 #ifndef SNAKE_H
 #define SNAKE_H
 
-#include <deque>
+#include <vector>
 #include <utility>
-#include "Direction.h"
+#include <chrono>
+#include "Direction.h"   // ✅ add this
 
 class Snake {
 private:
-    std::deque<std::pair<int, int>> body;
-    Direction dir;
-    bool growNext;
-    bool isPowered;
-    int powerTimer;
+    std::vector<std::pair<int, int>> body;
+    bool powerActive;
+    std::chrono::steady_clock::time_point powerStartTime;
 
 public:
-    Snake(int x, int y);
+    Snake(int startX, int startY);
 
-    void move();
-    void changeDirection(Direction newDir);
-    bool collision(int width, int height);
-    bool eatsItself();
-
+    void move(Direction dir, int width, int height);
     void grow();
+    bool checkCollision(int width, int height);
+    bool isPowerActive();
     void activatePower();
-    void updatePower();
-    bool isPowerActive() const;
-    int getPowerTimeLeft() const;
 
-    std::pair<int, int> getHead() const;
-    std::deque<std::pair<int, int>>& getBody();
-    const std::deque<std::pair<int, int>>& getBody() const;
-    int getSize() const;
+    const std::vector<std::pair<int, int>>& getBody() const;
 };
 
 #endif
