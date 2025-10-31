@@ -1,41 +1,48 @@
-# Makefile for Snake Game (Cross-platform)
+# ---------------------------------------------------------
+# Makefile for Snake Game (Cross-Platform)
+# Author: Bhavika Mulani
+# ---------------------------------------------------------
 
-CXX = g++
-CXXFLAGS = -std=c++11 -Wall -Wextra
+CXX      = g++
+CXXFLAGS = -std=c++17 -Wall -Wextra
 
-# Detect OS
+# Detect OS and set platform-specific settings
 ifeq ($(OS),Windows_NT)
-    TARGET = snake.exe
-    RM = del /Q
+    TARGET  = snake_game.exe
+    RM      = del /Q
     LDFLAGS =
 else
-    TARGET = snake
-    RM = rm -f
+    TARGET  = snake_game
+    RM      = rm -f
     LDFLAGS = -lpthread
 endif
 
-# Source files
-SRCS = main.cpp Snake.cpp SnakeMap.cpp Input.cpp Game.cpp
-OBJS = $(SRCS:.cpp=.o)
+# Source and header files
+SRCS    = main.cpp Snake.cpp SnakeMap.cpp Input.cpp Game.cpp
+OBJS    = $(SRCS:.cpp=.o)
 HEADERS = Direction.h Snake.h SnakeMap.h Input.h Game.h
 
-# Default target
+# ---------------------------------------------------------
+# Build Targets
+# ---------------------------------------------------------
+
+# Default target: build the executable
 all: $(TARGET)
 
-# Link object files
+# Link object files into the final binary
 $(TARGET): $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJS) $(LDFLAGS)
 
-# Compile source files
+# Compile each .cpp file to .o
 %.o: %.cpp $(HEADERS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# Clean build files
+# Remove all compiled objects and executable
 clean:
 	$(RM) $(OBJS) $(TARGET)
 
-# Run the game
-run: $(TARGET)
+# Build and run
+run: all
 	./$(TARGET)
 
 .PHONY: all clean run

@@ -1,151 +1,112 @@
-# 🐍 Enhanced Snake Game
+# 🐍Snake Game
 
-A feature-rich, cross-platform Snake game written in C++ with dynamic board sizing and power-up mechanics!
+A feature-rich, cross-platform C++ Snake Game with dynamic board resizing, smooth gameplay, and a power-up system for extra challenge and fun.
 
-## ✨ Features
+# ✨ Features
+Cross-Platform: Works seamlessly on Windows, Linux, and macOS
+Dynamic Board Sizing: Resize the game board during play
+Power Fruit System: Collect ⭐ to become invincible for 10 seconds
+Visual Modes: Toggle between Emoji and ASCII display
+Smooth Gameplay: Responsive controls and progressive speed increase
+Object-Oriented Design: Cleanly modularized codebase for clarity and scalability
 
-- **Cross-Platform**: Works on Windows, Linux, and macOS
-- **Dynamic Board Sizing**: Increase or decrease board size during gameplay
-- **Power Fruit System**: Collect ⭐ to become invincible for 10 seconds!
-- **Visual Modes**: Switch between emoji and ASCII display modes
-- **Smooth Gameplay**: Responsive controls with progressive difficulty
-- **Clean Architecture**: Object-oriented design with separate files
-
-## 🎮 Controls
-
-| Key | Action |
-|-----|--------|
-| W / ↑ | Move Up |
-| S / ↓ | Move Down |
-| A / ← | Move Left |
-| D / → | Move Right |
-| Q | Quit Game |
-| + / = | Increase Board Size |
-| - / _ | Decrease Board Size |
-| **1** | **Small Blocks (██)** |
-| **2** | **Medium Blocks (███)** |
-| **3** | **Large Blocks (████) - DEFAULT** |
-| **4** | **XLarge Blocks (██████)** |
-| **5** | **HUGE Blocks (████████)** |
-| E | Emoji Mode (🟩🍎⭐) |
-
-## 🚀 Building and Running
-
-### Linux/macOS
-
-```bash
-# Compile
+# 🎮 Controls
+Key	Action
+W / ↑	Move Up
+S / ↓	Move Down
+A / ←	Move Left
+D / →	Move Right
+Q	Quit Game
++ / =	Increase Board Size
+- / _	Decrease Board Size
+1	Small Blocks
+2	Medium Blocks
+3	Large Blocks (Default)
+4	X-Large Blocks
+5	Huge Blocks
+E	Toggle Emoji Mode
+🚀 Building and Running
+Linux / macOS
+# Build
 make
 
 # Run
-./snake
+./snake_game
 
-# Or compile and run
+# Or build and run together
 make run
 
 # Clean build files
 make clean
-```
 
-### Windows (MinGW)
-
-```bash
-# Compile
+Windows (MinGW)
 mingw32-make
+snake_game.exe
 
-# Run
-snake.exe
-
-# Clean
+# Clean build
 mingw32-make clean
-```
 
-### Manual Compilation
-
-```bash
+Manual Compilation
 # Linux/macOS
-g++ -std=c++11 -o snake main.cpp Snake.cpp SnakeMap.cpp Input.cpp Game.cpp -lpthread
+g++ -std=c++17 -o snake_game main.cpp Snake.cpp SnakeMap.cpp Input.cpp Game.cpp -lpthread
 
 # Windows
-g++ -std=c++11 -o snake.exe main.cpp Snake.cpp SnakeMap.cpp Input.cpp Game.cpp
-```
+g++ -std=c++17 -o snake_game.exe main.cpp Snake.cpp SnakeMap.cpp Input.cpp Game.cpp
 
-## 📁 Project Structure
-
-```
+# 📁 Project Structure
 snake-game/
-├── Direction.h          # Direction enum
-├── Input.h/cpp         # Cross-platform input handling
-├── Snake.h/cpp         # Snake entity logic
-├── SnakeMap.h/cpp      # Game map and rendering
-├── Game.h/cpp          # Game loop and controller
+├── Direction.h         # Direction enumeration
+├── Input.h / Input.cpp # Cross-platform input handling
+├── Snake.h / Snake.cpp # Snake entity logic
+├── SnakeMap.h / SnakeMap.cpp # Game board and rendering
+├── Game.h / Game.cpp   # Main game controller
 ├── main.cpp            # Entry point
 ├── Makefile            # Build configuration
-└── README.md           # This file
-```
+└── README.md           # Documentation
 
-## 🎯 Gameplay Mechanics
+# 🎯 Gameplay Mechanics
+🍎 Regular Food
+Increases snake length by 1
+Appears randomly
+Slightly increases game speed
 
-### Regular Food (🍎)
-- Increases snake length by 1
-- Spawns randomly on the board
-- Slightly increases game speed
+# ⭐ Power Fruit
+Appears randomly (~2% chance per frame)
+Remains visible for ~30 seconds
+Grants 10 seconds of invincibility
+During invincibility:
+Snake can pass through walls
+Still dies on self-collision
+Power timer shown at the top
+Board and Display
+Default size: 30×20
+Range: 10×10 → 50×40
+Modes: Emoji or ASCII, switchable anytime
 
-### Power Fruit (⭐)
-- Spawns randomly with 2% chance per frame
-- Stays on board for ~30 seconds
-- Grants **10 seconds of invincibility**
-- During power mode:
-  - Snake turns golden (🟨)
-  - Can pass through walls without dying
-  - Still dies from eating itself
-  - Timer displayed at top of screen
+# 🔧 Technical Details
+Language: C++17
+Dependencies: Standard Library only
+Threading: std::this_thread::sleep_for() for timing
+Cross-Platform I/O: Uses conio.h (Windows) / termios (Unix)
+Screen Control: ANSI escape sequences for clean refresh
 
-### Dynamic Board
-- Start size: 30x20
-- Min size: 10x10
-- Max size: 50x40
-- Resize during gameplay with +/- keys
+# 🐛 Known Limitations
+Terminal emoji appearance depends on terminal font and scaling
+Rapid key presses can occasionally queue extra moves
+Small terminals may truncate board display
 
-### Display Modes
-- **Emoji Mode**: Colorful Unicode emojis (default)
-- **ASCII Mode**: Text characters for larger terminal display
+# 💡 Future Enhancements
+Add difficulty levels
+Implement high-score tracking
+Introduce obstacles in between
+Add local multiplayer mode
+Optional sound effects (via SDL or SFML)
 
-## 🔧 Technical Details
+# Requirements
+C++17 or later
+Compatible Compilers: g++, clang, or MinGW
 
-- **Language**: C++11
-- **Dependencies**: Standard library only
-- **Threading**: Uses `<thread>` for timing
-- **Platform Detection**: Conditional compilation for OS-specific code
-- **Terminal Control**: Native APIs (conio.h for Windows, termios for Unix)
-
-## 📝 Notes
-
-- Terminal emoji size depends on your terminal settings
-- ASCII mode provides a "larger" visual experience
-- Power fruit appearance is random but balanced
-- Game speed increases gradually with score
-- All collisions respect the power-up status
-
-## 🐛 Known Limitations
-
-- Terminal emoji sizing is controlled by terminal emulator, not the program
-- Fast typing may queue multiple direction changes
-- Very small terminal windows may not display properly
-
-## 🤝 Contributing
-
-Feel free to fork, modify, and enhance! Some ideas:
-- Add difficulty levels
-- Implement high score system
-- Add more power-up types
-- Create multiplayer mode
-- Add sound effects (with external library)
-
-## 📜 License
-
-Free to use and modify. Have fun! 🎮
-
----
-
-**Enjoy the game!** 🐍✨
+# Author
+Bhavika Mulani
+Developed for Intro to Programming coursework.
+Demonstrates strong application of object-oriented design, modular architecture, and interactive console UI in C++.
