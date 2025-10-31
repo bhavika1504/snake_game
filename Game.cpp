@@ -61,12 +61,28 @@ void Game::processInput() {
             map->resize(map->getWidth() - 2, map->getHeight() - 2);
             break;
         case 'e': case 'E':
-            // Toggle emoji size (ASCII mode)
+            // Switch to original emoji mode (smallest)
+            map->setEmojiSize("emoji");
+            break;
+        case '1':
+            // Small blocks (2-wide)
+            map->setEmojiSize("small");
+            break;
+        case '2':
+            // Medium blocks (3-wide)
+            map->setEmojiSize("medium");
+            break;
+        case '3':
+            // Large blocks (4-wide) - DEFAULT
             map->setEmojiSize("large");
             break;
-        case 'n': case 'N':
-            // Normal emoji mode
-            map->setEmojiSize("normal");
+        case '4':
+            // Extra large blocks (6-wide)
+            map->setEmojiSize("xlarge");
+            break;
+        case '5':
+            // HUGE blocks (8-wide)
+            map->setEmojiSize("huge");
             break;
     }
 }
@@ -74,18 +90,31 @@ void Game::processInput() {
 void Game::update() {
     snake->move();
     
-    // Check wall collision (only matters if not powered)
-    if (snake->collision(map->getWidth(), map->getHeight())) {
-        if (!snake->isPowerActive()) {
+    // Get current head position
+    auto head = snake->getHead();
+    int newRow = head.first;
+    int newCol = head.second;
+    bool hitWall = false;
+    
+    // Check wall collision
+    if (newRow < 0 || newRow >= map->getHeight() || 
+        newCol < 0 || newCol >= map->getWidth()) {
+        hitWall = true;
+        
+        if (snake->isPowerActive()) {
+            // WRAP AROUND when powered - teleport to other side!
+            if (newRow < 0) newRow = map->getHeight() - 1;
+            if (newRow >= map->getHeight()) newRow = 0;
+            if (newCol < 0) newCol = map->getWidth() - 1;
+            if (newCol >= map->getWidth()) newCol = 0;
+            
+            // Update the snake's head position to wrapped location
+            snake->getBody().front() = {newRow, newCol};
+        } else {
+            // Not powered - game over
             gameOver = true;
             return;
         }
-        // Wrap around when powered
-        auto head = snake->getHead();
-        if (head.first < 0) head.first = map->getHeight() - 1;
-        if (head.first >= map->getHeight()) head.first = 0;
-        if (head.second < 0) head.second = map->getWidth() - 1;
-        if (head.second >= map->getWidth()) head.second = 0;
     }
     
     // Check self-collision

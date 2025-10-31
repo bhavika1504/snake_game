@@ -20,6 +20,7 @@ public:
     bool collision(int width, int height);
     bool eatsItself();
     std::pair<int, int> getHead() const;
+    std::deque<std::pair<int, int>>& getBody();
     const std::deque<std::pair<int, int>>& getBody() const;
     int getSize() const;
     void setGrow();

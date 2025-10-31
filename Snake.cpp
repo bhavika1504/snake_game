@@ -47,6 +47,10 @@ std::pair<int, int> Snake::getHead() const {
     return body.front();
 }
 
+std::deque<std::pair<int, int>>& Snake::getBody() {
+    return body;
+}
+
 const std::deque<std::pair<int, int>>& Snake::getBody() const {
     return body;
 }

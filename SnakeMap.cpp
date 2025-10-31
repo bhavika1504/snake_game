@@ -17,27 +17,27 @@ SnakeMap::SnakeMap(int w, int h, Snake* s)
     // Check if running in Windows Terminal (supports emojis better)
     const char* wt_session = getenv("WT_SESSION");
     if (wt_session != nullptr) {
-        // Windows Terminal detected - use emojis!
-        snakeEmoji = "🟩";
-        foodEmoji = "🍎";
-        powerEmoji = "⭐";
-        emptyEmoji = "⬛";
-        powerSnakeEmoji = "🟨";
+        // Windows Terminal - use EXTRA LARGE blocks (4-wide!)
+        snakeEmoji = "████";
+        foodEmoji = "●●●●";
+        powerEmoji = "★★★★";
+        emptyEmoji = "    ";
+        powerSnakeEmoji = "▓▓▓▓";
     } else {
-        // Regular CMD - use ASCII
-        snakeEmoji = "[]";
-        foodEmoji = "@@";
-        powerEmoji = "**";
-        emptyEmoji = "  ";
-        powerSnakeEmoji = "##";
+        // Regular CMD - use large ASCII
+        snakeEmoji = "####";
+        foodEmoji = "@@@@";
+        powerEmoji = "****";
+        emptyEmoji = "    ";
+        powerSnakeEmoji = "====";
     }
 #else
-    // Use emojis on Linux/Mac
-    snakeEmoji = "🟩";
-    foodEmoji = "🍎";
-    powerEmoji = "⭐";
-    emptyEmoji = "⬛";
-    powerSnakeEmoji = "🟨";
+    // Linux/Mac - use EXTRA LARGE blocks (4-wide!)
+    snakeEmoji = "████";
+    foodEmoji = "●●●●";
+    powerEmoji = "★★★★";
+    emptyEmoji = "    ";
+    powerSnakeEmoji = "▓▓▓▓";
 #endif
     
     spawnFood();
@@ -127,7 +127,7 @@ void SnakeMap::draw() {
     
     // Display power status
     if (snake->isPowerActive()) {
-        cout << "⚡ POWER MODE ACTIVE! ⚡ Time left: " << snake->getPowerTimeLeft() << "s\n";
+        cout << "⚡⚡⚡ INVINCIBLE MODE! ⚡⚡⚡ Time: " << snake->getPowerTimeLeft() << "s ⚡⚡⚡\n";
     }
     
     for (int i = 0; i < height; i++) {
@@ -167,8 +167,11 @@ void SnakeMap::draw() {
         cout << "\n";
     }
     
-    cout << "Score: " << snake->getSize() - 1 << "\n";
-    cout << "Controls: WASD/Arrow Keys | Q: Quit | +/-: Resize Board\n";
+    cout << "\nScore: " << snake->getSize() - 1;
+    if (snake->isPowerActive()) {
+        cout << " | ⚡ INVINCIBLE ⚡";
+    }
+    cout << "\nControls: WASD/Arrows | Q:Quit | +/-:Resize | 1-5:Size (1=Small 5=Huge) | E:Emoji\n";
 }
 
 void SnakeMap::resize(int newWidth, int newHeight) {
@@ -191,18 +194,46 @@ void SnakeMap::resize(int newWidth, int newHeight) {
 
 void SnakeMap::setEmojiSize(const string& size) {
     if (size == "emoji") {
-        // Switch to emoji mode
+        // Original emoji mode (small)
         snakeEmoji = "🟩";
         foodEmoji = "🍎";
         powerEmoji = "⭐";
         emptyEmoji = "⬛";
         powerSnakeEmoji = "🟨";
+    } else if (size == "huge") {
+        // HUGE blocks mode (8-wide!)
+        snakeEmoji = "████████";
+        foodEmoji = "●●●●●●●●";
+        powerEmoji = "★★★★★★★★";
+        emptyEmoji = "        ";
+        powerSnakeEmoji = "▓▓▓▓▓▓▓▓";
+    } else if (size == "xlarge") {
+        // EXTRA LARGE blocks (6-wide)
+        snakeEmoji = "██████";
+        foodEmoji = "●●●●●●";
+        powerEmoji = "★★★★★★";
+        emptyEmoji = "      ";
+        powerSnakeEmoji = "▓▓▓▓▓▓";
+    } else if (size == "large") {
+        // LARGE blocks (4-wide) - DEFAULT
+        snakeEmoji = "████";
+        foodEmoji = "●●●●";
+        powerEmoji = "★★★★";
+        emptyEmoji = "    ";
+        powerSnakeEmoji = "▓▓▓▓";
+    } else if (size == "medium") {
+        // Medium blocks (3-wide)
+        snakeEmoji = "███";
+        foodEmoji = "●●●";
+        powerEmoji = "★★★";
+        emptyEmoji = "   ";
+        powerSnakeEmoji = "▓▓▓";
     } else {
-        // ASCII mode (default for Windows)
-        snakeEmoji = "[]";
-        foodEmoji = "@@";
-        powerEmoji = "**";
+        // Small blocks (2-wide)
+        snakeEmoji = "██";
+        foodEmoji = "●●";
+        powerEmoji = "★★";
         emptyEmoji = "  ";
-        powerSnakeEmoji = "##";
+        powerSnakeEmoji = "▓▓";
     }
 }
