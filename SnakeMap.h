@@ -1,38 +1,52 @@
 #ifndef SNAKEMAP_H
 #define SNAKEMAP_H
 
-#include <vector>
-#include <string>
 #include <utility>
-#include <chrono>
+#include <string>
 #include "Snake.h"
 
 class SnakeMap {
 private:
     int width, height;
-    Snake* snake;
-
     std::pair<int, int> food;
     std::pair<int, int> powerFruit;
-
     bool powerFruitActive;
-    std::chrono::steady_clock::time_point powerStartTime;
+    int powerFruitTimer;
+    Snake* snake;
+    
+    std::string snakeEmoji;
+    std::string foodEmoji;
+    std::string powerEmoji;
+    std::string emptyEmoji;
+    std::string powerSnakeEmoji;
+    std::string borderEmoji;
 
-    std::string foodEmoji, emptyEmoji, snakeEmoji, powerEmoji, powerSnakeEmoji, borderEmoji;
+    bool emojiMode;      // ✅ Track emoji mode (on/off)
+
+    // ✅ NEW: For smooth on-screen messages (like “Invincible Mode Activated!”)
+    std::string modeMessage;
+    int messageTimer;
 
 public:
-    SnakeMap(int width, int height, Snake* snake);
-
-    void clearScreen();
-    void draw();
-
+    SnakeMap(int w, int h, Snake* s);
     void spawnFood();
     void spawnPowerFruit();
-    bool checkCollision();
-    bool eatFood();
-    bool eatPowerFruit();
-    void resize(int newW, int newH);
-    void setEmojiSize(const std::string& mode);
+    bool checkFood();
+    bool checkPowerFruit();
+    void updatePowerFruit();
+    void draw();
+    void clearScreen();
+    int getWidth() const { return width; }
+    int getHeight() const { return height; }
+    
+    // Dynamic board size
+    void resize(int newWidth, int newHeight);
+    
+    // Emoji size control (uses Unicode variations)
+    void setEmojiSize(const std::string& size);
+
+    // ✅ Added: toggle emoji mode (E key)
+    void toggleEmojiMode();
 };
 
 #endif

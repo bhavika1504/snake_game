@@ -1,65 +1,86 @@
 #include "Snake.h"
-#include <algorithm>
-using namespace std;
 
-Snake::Snake(int startX, int startY)
-    : powerActive(false) {
-    body.push_back({startX, startY});
+Snake::Snake(int x, int y) : dir(RIGHT), grow(false), isPowered(false), powerTimer(0) {
+    body.push_back({x, y});
 }
 
-void Snake::move(Direction dir, int width, int height) {
-    // Move head
-    pair<int, int> head = body.front();
+void Snake::move() {
+    std::pair<int, int> head = body.front();
     switch (dir) {
-        case Direction::UP: head.second--; break;
-        case Direction::DOWN: head.second++; break;
-        case Direction::LEFT: head.first--; break;
-        case Direction::RIGHT: head.first++; break;
+        case UP: head.first--; break;
+        case DOWN: head.first++; break;
+        case LEFT: head.second--; break;
+        case RIGHT: head.second++; break;
     }
-
-    // Add new head
-    body.insert(body.begin(), head);
-    // Remove tail
-    body.pop_back();
-
-    // Handle power fruit duration (5s)
-    if (powerActive) {
-        auto now = chrono::steady_clock::now();
-        auto elapsed = chrono::duration_cast<chrono::seconds>(now - powerStartTime).count();
-        if (elapsed > 5)
-            powerActive = false;
+    body.push_front(head);
+    if (!grow) {
+        body.pop_back();
+    } else {
+        grow = false;
     }
 }
 
-void Snake::grow() {
-    // Add one more segment at tail (duplicate last)
-    body.push_back(body.back());
+void Snake::changeDirection(Direction newDir) {
+    if ((dir == UP && newDir != DOWN) || (dir == DOWN && newDir != UP) ||
+        (dir == LEFT && newDir != RIGHT) || (dir == RIGHT && newDir != LEFT)) {
+        dir = newDir;
+    }
 }
 
-bool Snake::checkCollision(int width, int height) {
+bool Snake::collision(int width, int height) {
+    if (isPowered) return false; // Invincible when powered
+    
     auto head = body.front();
+    return (head.first < 0 || head.first >= height || 
+            head.second < 0 || head.second >= width);
+}
 
-    // Wall collision
-    if (head.first <= 0 || head.second <= 0 || head.first >= width - 1 || head.second >= height - 1)
-        return true;
-
-    // Self collision (ignore head)
-    for (size_t i = 1; i < body.size(); ++i)
-        if (body[i] == head)
-            return true;
-
+bool Snake::eatsItself() {
+    auto head = body.front();
+    for (std::size_t i = 1; i < body.size(); i++) {
+        if (body[i] == head) return true;
+    }
     return false;
 }
 
-bool Snake::isPowerActive() {
-    return powerActive;
+std::pair<int, int> Snake::getHead() const {
+    return body.front();
+}
+
+std::deque<std::pair<int, int>>& Snake::getBody() {
+    return body;
+}
+
+const std::deque<std::pair<int, int>>& Snake::getBody() const {
+    return body;
+}
+
+int Snake::getSize() const {
+    return body.size();
+}
+
+void Snake::setGrow() {
+    grow = true;
 }
 
 void Snake::activatePower() {
-    powerActive = true;
-    powerStartTime = chrono::steady_clock::now();
+    isPowered = true;
+    powerTimer = 67; // 10 seconds at 150ms per frame
 }
 
-const vector<pair<int, int>>& Snake::getBody() const {
-    return body;
+void Snake::updatePower() {
+    if (isPowered && powerTimer > 0) {
+        powerTimer--;
+        if (powerTimer == 0) {
+            isPowered = false;
+        }
+    }
+}
+
+bool Snake::isPowerActive() const {
+    return isPowered;
+}
+
+int Snake::getPowerTimeLeft() const {
+    return (powerTimer * 150) / 1000; // Convert to seconds
 }

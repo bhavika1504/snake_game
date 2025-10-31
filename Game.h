@@ -3,22 +3,25 @@
 
 #include "Snake.h"
 #include "SnakeMap.h"
-#include <memory>
+#include "Input.h"
 
 class Game {
 private:
-    bool running;
-    int width, height;
-    Direction direction;
-    std::unique_ptr<Snake> snake;
-    std::unique_ptr<SnakeMap> map;
+    Snake* snake;
+    SnakeMap* map;
+    Input* input;
+    bool gameOver;
+    int gameSpeed;
 
 public:
     Game(int width, int height);
+    ~Game();
     void run();
-    void input();
-    void logic();
-    void draw();
+    void processInput();
+    void update();
+    void render();
+    bool isGameOver() const;
+    void setGameSpeed(int speed);
 };
 
 #endif
