@@ -1,31 +1,28 @@
 #include <iostream>
+#ifdef _WIN32
+#include <windows.h>
+#endif
 #include "Game.h"
 
 using namespace std;
 
 int main() {
+#ifdef _WIN32
+    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    DWORD dwMode = 0;
+    GetConsoleMode(hOut, &dwMode);
+    dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+    SetConsoleMode(hOut, dwMode);
+#endif
+
     cout << "=== 🐍 SUPER SNAKE GAME 🐍 ===\n\n";
-    cout << "Controls:\n";
-    cout << "  Movement: WASD or Arrow Keys\n";
-    cout << "  Q - Quit\n";
-    cout << "  +/- - Increase/Decrease board size\n\n";
-    cout << "SIZE CONTROLS (Press during game):\n";
-    cout << "  1 - Small   (██)\n";
-    cout << "  2 - Medium  (███)\n";
-    cout << "  3 - Large   (████) [DEFAULT]\n";
-    cout << "  4 - XLarge  (██████)\n";
-    cout << "  5 - HUGE    (████████)\n";
-    cout << "  E - Emoji   (🟩)\n\n";
-    cout << "⭐ SPECIAL: Collect ★★★★ power fruit for 10 seconds of invincibility!\n";
-    cout << "   While powered, you can pass through walls!\n\n";
-    cout << "Press ENTER to start...\n";
+    cout << "Controls: WASD / Arrows | Q Quit | +/- Resize | 1–5 Size | E Emoji\n";
+    cout << "⭐ Collect 💥 for 10s INVINCIBLE MODE ⭐\n\n";
+    cout << "Press ENTER to start...";
     cin.get();
-    
-    int width = 20;   // Smaller width for bigger blocks
-    int height = 20;  // Smaller height for bigger blocks
-    
-    Game game(width, height);
+
+    Game game(20, 20);
     game.run();
-    
+
     return 0;
 }

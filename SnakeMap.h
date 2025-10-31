@@ -2,41 +2,39 @@
 #define SNAKEMAP_H
 
 #include <utility>
+#include <chrono>
 #include <string>
 #include "Snake.h"
 
 class SnakeMap {
 private:
     int width, height;
+    Snake* snake;
     std::pair<int, int> food;
     std::pair<int, int> powerFruit;
     bool powerFruitActive;
-    int powerFruitTimer;
-    Snake* snake;
-    
-    std::string snakeEmoji;
-    std::string foodEmoji;
-    std::string powerEmoji;
-    std::string emptyEmoji;
-    std::string powerSnakeEmoji;
+    std::chrono::steady_clock::time_point powerStartTime;
 
+    std::string foodEmoji, emptyEmoji, snakeEmoji, powerEmoji;
+    std::string powerSnakeEmoji, borderEmoji;
+    
 public:
-    SnakeMap(int w, int h, Snake* s);
-    void spawnFood();
-    void spawnPowerFruit();
-    bool checkFood();
-    bool checkPowerFruit();
-    void updatePowerFruit();
+    SnakeMap(int width, int height, Snake* snake);
+
     void draw();
     void clearScreen();
+    void spawnFood();
+    void spawnPowerFruit();
+
+    bool checkCollision();
+    bool eatFood();
+    bool eatPowerFruit();
+
+    void resize(int newW, int newH);
+    void setEmojiSize(const std::string& mode);
+
     int getWidth() const { return width; }
     int getHeight() const { return height; }
-    
-    // Dynamic board size
-    void resize(int newWidth, int newHeight);
-    
-    // Emoji size control (uses Unicode variations)
-    void setEmojiSize(const std::string& size);
 };
 
 #endif

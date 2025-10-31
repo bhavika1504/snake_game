@@ -1,46 +1,25 @@
 #include "SnakeMap.h"
 #include <iostream>
+#include <iomanip>
 #include <cstdlib>
 #include <ctime>
-
-#ifdef _WIN32
-#include <windows.h>
-#endif
-
 using namespace std;
 
-SnakeMap::SnakeMap(int w, int h, Snake* s) 
-    : width(w), height(h), snake(s), powerFruitActive(false), powerFruitTimer(0) {
-    srand(time(0));
-    
-#ifdef _WIN32
-    // Check if running in Windows Terminal (supports emojis better)
-    const char* wt_session = getenv("WT_SESSION");
-    if (wt_session != nullptr) {
-        // Windows Terminal - use EXTRA LARGE blocks (4-wide!)
-        snakeEmoji = "████";
-        foodEmoji = "●●●●";
-        powerEmoji = "★★★★";
-        emptyEmoji = "    ";
-        powerSnakeEmoji = "▓▓▓▓";
-    } else {
-        // Regular CMD - use large ASCII
-        snakeEmoji = "####";
-        foodEmoji = "@@@@";
-        powerEmoji = "****";
-        emptyEmoji = "    ";
-        powerSnakeEmoji = "====";
-    }
-#else
-    // Linux/Mac - use EXTRA LARGE blocks (4-wide!)
-    snakeEmoji = "████";
-    foodEmoji = "●●●●";
-    powerEmoji = "★★★★";
-    emptyEmoji = "    ";
-    powerSnakeEmoji = "▓▓▓▓";
-#endif
-    
+SnakeMap::SnakeMap(int width, int height, Snake* snake)
+    : width(width), height(height), snake(snake) {
+    foodEmoji = "🍎 ";
+    emptyEmoji = "  ";
+    snakeEmoji = "🟩 ";
+    powerEmoji = "💥 ";
+    powerSnakeEmoji = "⚡ ";
+    borderEmoji = "⬛ ";
+    powerFruitActive = false;
+    srand((unsigned)time(nullptr));
     spawnFood();
+}
+
+void SnakeMap::clearScreen() {
+    cout << "\033[H"; // move cursor to top-left (no flicker)
 }
 
 void SnakeMap::spawnFood() {
@@ -51,10 +30,7 @@ void SnakeMap::spawnFood() {
         y = rand() % width;
         conflict = false;
         for (auto& seg : snake->getBody()) {
-            if (seg.first == x && seg.second == y) conflict = true;
-        }
-        if (powerFruitActive && powerFruit.first == x && powerFruit.second == y) {
-            conflict = true;
+            if (seg.first == x && seg.second == y) { conflict = true; break; }
         }
     } while (conflict);
     food = {x, y};
@@ -62,7 +38,6 @@ void SnakeMap::spawnFood() {
 
 void SnakeMap::spawnPowerFruit() {
     if (powerFruitActive) return;
-    
     int x, y;
     bool conflict;
     do {
@@ -70,170 +45,107 @@ void SnakeMap::spawnPowerFruit() {
         y = rand() % width;
         conflict = false;
         for (auto& seg : snake->getBody()) {
-            if (seg.first == x && seg.second == y) conflict = true;
+            if (seg.first == x && seg.second == y) { conflict = true; break; }
         }
-        if (food.first == x && food.second == y) conflict = true;
+        if (!conflict && food.first == x && food.second == y) conflict = true;
     } while (conflict);
-    
     powerFruit = {x, y};
     powerFruitActive = true;
-    powerFruitTimer = 200; // Power fruit stays for ~30 seconds
-}
-
-bool SnakeMap::checkFood() {
-    if (snake->getHead() == food) {
-        snake->setGrow();
-        spawnFood();
-        return true;
-    }
-    return false;
-}
-
-bool SnakeMap::checkPowerFruit() {
-    if (powerFruitActive && snake->getHead() == powerFruit) {
-        snake->activatePower();
-        powerFruitActive = false;
-        powerFruitTimer = 0;
-        return true;
-    }
-    return false;
-}
-
-void SnakeMap::updatePowerFruit() {
-    // Spawn power fruit randomly
-    if (!powerFruitActive && rand() % 100 < 2) { // 2% chance each frame
-        spawnPowerFruit();
-    }
-    
-    // Remove power fruit after timer expires
-    if (powerFruitActive && powerFruitTimer > 0) {
-        powerFruitTimer--;
-        if (powerFruitTimer == 0) {
-            powerFruitActive = false;
-        }
-    }
-}
-
-void SnakeMap::clearScreen() {
-#ifdef _WIN32
-    system("cls");
-#else
-    system("clear");
-#endif
+    powerStartTime = chrono::steady_clock::now();
 }
 
 void SnakeMap::draw() {
     clearScreen();
-    
-    // Display power status
-    if (snake->isPowerActive()) {
-        cout << "⚡⚡⚡ INVINCIBLE MODE! ⚡⚡⚡ Time: " << snake->getPowerTimeLeft() << "s ⚡⚡⚡\n";
-    }
-    
+
+    if (snake->isPowerActive())
+        cout << "⚡ INVINCIBLE MODE! ⚡ " << snake->getPowerTimeLeft() << "s left ⚡\n";
+    else
+        cout << "                                      \n";
+
+    // top border
+    cout << borderEmoji;
+    for (int j = 0; j < width; j++) cout << borderEmoji;
+    cout << borderEmoji << "\n";
+
     for (int i = 0; i < height; i++) {
+        cout << borderEmoji;
         for (int j = 0; j < width; j++) {
             bool printed = false;
-            
-            // Draw food
+
             if (food.first == i && food.second == j) {
-                cout << foodEmoji;
-                printed = true;
-            }
-            
-            // Draw power fruit
-            if (!printed && powerFruitActive && powerFruit.first == i && powerFruit.second == j) {
-                cout << powerEmoji;
-                printed = true;
-            }
-            
-            // Draw snake
-            if (!printed) {
+                cout << foodEmoji; printed = true;
+            } else if (powerFruitActive && powerFruit.first == i && powerFruit.second == j) {
+                cout << powerEmoji; printed = true;
+            } else {
                 for (auto& seg : snake->getBody()) {
                     if (seg.first == i && seg.second == j) {
-                        if (snake->isPowerActive()) {
-                            cout << powerSnakeEmoji;
-                        } else {
-                            cout << snakeEmoji;
-                        }
+                        cout << (snake->isPowerActive() ? powerSnakeEmoji : snakeEmoji);
                         printed = true;
                         break;
                     }
                 }
             }
-            
-            // Draw empty space
+
             if (!printed) cout << emptyEmoji;
         }
-        cout << "\n";
+        cout << borderEmoji << "\n";
     }
-    
-    cout << "\nScore: " << snake->getSize() - 1;
-    if (snake->isPowerActive()) {
-        cout << " | ⚡ INVINCIBLE ⚡";
-    }
-    cout << "\nControls: WASD/Arrows | Q:Quit | +/-:Resize | 1-5:Size (1=Small 5=Huge) | E:Emoji\n";
+
+    // bottom border
+    cout << borderEmoji;
+    for (int j = 0; j < width; j++) cout << borderEmoji;
+    cout << borderEmoji << "\n";
+
+    cout << "Score: " << snake->getSize() - 1;
+    if (snake->isPowerActive()) cout << " | ⚡ Invincible ⚡";
+    cout << "\nControls: WASD / Arrows | Q=Quit | +/- Resize | 1–5 Size | E Emoji\n";
+    cout.flush();
 }
 
-void SnakeMap::resize(int newWidth, int newHeight) {
-    if (newWidth < 10) newWidth = 10;
-    if (newHeight < 10) newHeight = 10;
-    if (newWidth > 50) newWidth = 50;
-    if (newHeight > 40) newHeight = 40;
-    
-    width = newWidth;
-    height = newHeight;
-    
-    // Respawn food and power fruit if they're out of bounds
-    if (food.first >= height || food.second >= width) {
+bool SnakeMap::checkCollision() {
+    auto head = snake->getBody().front();
+    if (head.first < 0 || head.first >= height || head.second < 0 || head.second >= width) {
+        if (snake->isPowerActive()) return false;
+        return true;
+    }
+    for (size_t i = 1; i < snake->getBody().size(); i++)
+        if (snake->getBody()[i] == head) return true;
+    return false;
+}
+
+bool SnakeMap::eatFood() {
+    auto head = snake->getBody().front();
+    if (head == food) {
+        snake->grow();
         spawnFood();
+        if (rand() % 6 == 0) spawnPowerFruit();
+        return true;
     }
-    if (powerFruitActive && (powerFruit.first >= height || powerFruit.second >= width)) {
-        powerFruitActive = false;
-    }
+    return false;
 }
 
-void SnakeMap::setEmojiSize(const string& size) {
-    if (size == "emoji") {
-        // Original emoji mode (small)
-        snakeEmoji = "🟩";
-        foodEmoji = "🍎";
-        powerEmoji = "⭐";
-        emptyEmoji = "⬛";
-        powerSnakeEmoji = "🟨";
-    } else if (size == "huge") {
-        // HUGE blocks mode (8-wide!)
-        snakeEmoji = "████████";
-        foodEmoji = "●●●●●●●●";
-        powerEmoji = "★★★★★★★★";
-        emptyEmoji = "        ";
-        powerSnakeEmoji = "▓▓▓▓▓▓▓▓";
-    } else if (size == "xlarge") {
-        // EXTRA LARGE blocks (6-wide)
-        snakeEmoji = "██████";
-        foodEmoji = "●●●●●●";
-        powerEmoji = "★★★★★★";
-        emptyEmoji = "      ";
-        powerSnakeEmoji = "▓▓▓▓▓▓";
-    } else if (size == "large") {
-        // LARGE blocks (4-wide) - DEFAULT
-        snakeEmoji = "████";
-        foodEmoji = "●●●●";
-        powerEmoji = "★★★★";
-        emptyEmoji = "    ";
-        powerSnakeEmoji = "▓▓▓▓";
-    } else if (size == "medium") {
-        // Medium blocks (3-wide)
-        snakeEmoji = "███";
-        foodEmoji = "●●●";
-        powerEmoji = "★★★";
-        emptyEmoji = "   ";
-        powerSnakeEmoji = "▓▓▓";
-    } else {
-        // Small blocks (2-wide)
-        snakeEmoji = "██";
-        foodEmoji = "●●";
-        powerEmoji = "★★";
-        emptyEmoji = "  ";
-        powerSnakeEmoji = "▓▓";
+bool SnakeMap::eatPowerFruit() {
+    auto head = snake->getBody().front();
+    if (powerFruitActive && head == powerFruit) {
+        snake->activatePower();
+        powerFruitActive = false;
+        return true;
     }
+    return false;
+}
+
+void SnakeMap::resize(int newW, int newH) {
+    if (newW < 10 || newH < 10) return;
+    width = newW;
+    height = newH;
+    spawnFood();
+}
+
+void SnakeMap::setEmojiSize(const std::string& mode) {
+    if (mode == "emoji") snakeEmoji = "🟩 ";
+    else if (mode == "small") snakeEmoji = "░░";
+    else if (mode == "medium") snakeEmoji = "▒▒";
+    else if (mode == "large") snakeEmoji = "▓▓";
+    else if (mode == "xlarge") snakeEmoji = "██";
+    else if (mode == "huge") snakeEmoji = "███";
 }

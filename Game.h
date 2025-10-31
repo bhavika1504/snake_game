@@ -3,25 +3,23 @@
 
 #include "Snake.h"
 #include "SnakeMap.h"
-#include "Input.h"
+#include "Direction.h"
 
 class Game {
 private:
     Snake* snake;
     SnakeMap* map;
-    Input* input;
+    int width, height;
     bool gameOver;
-    int gameSpeed;
+    Direction direction;
 
 public:
     Game(int width, int height);
     ~Game();
+
     void run();
-    void processInput();
-    void update();
-    void render();
-    bool isGameOver() const;
-    void setGameSpeed(int speed);
+    void input();
+    void logic();
 };
 
 #endif
