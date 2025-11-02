@@ -7,13 +7,12 @@
 using namespace std;
 
 Game::Game(int width, int height) 
-    : gameOver(false), gameSpeed(300) { // 🐢 Start slower for playability
+    : gameOver(false), gameSpeed(250) {
     snake = new Snake(height / 2, width / 2);
     map = new SnakeMap(width, height, snake);
     input = new Input();
     input->init();
 
-    // 🧹 Clear the entire console once when starting
     cout << "\033[2J\033[H";
 }
 
@@ -30,7 +29,7 @@ void Game::run() {
         update();
         render();
 
-        // 💤 Frame delay (adaptive to gameSpeed)
+
         this_thread::sleep_for(chrono::milliseconds(gameSpeed));
     }
 
@@ -99,7 +98,7 @@ void Game::update() {
     int newRow = head.first;
     int newCol = head.second;
 
-    // 🔲 Wall collision / wrapping
+    // Wall collision / wrapping
     if (newRow < 0 || newRow >= map->getHeight() ||
         newCol < 0 || newCol >= map->getWidth()) {
         if (snake->isPowerActive()) {
@@ -115,24 +114,24 @@ void Game::update() {
         }
     }
 
-    // 🌀 Self-collision (if head overlaps any other body part)
+    // Self-collision (if head overlaps any other body part)
     if (snake->eatsItself()) {
         gameOver = true;
         return;
     }
 
-    // 🍎 Eat food
+    // Eat food
     if (map->checkFood()) {
         snake->setGrow();
         map->spawnFood();
 
-        // 🐍 Gradually increase speed, but stay playable
+        //  Gradually increase speed, but stay playable
         if (gameSpeed > 120) {
             gameSpeed -= 10;
         }
     }
 
-    // 💎 Power fruit
+    // Power fruit
     if (map->checkPowerFruit()) {
         // Power handling inside SnakeMap/Snake
     }
@@ -145,7 +144,7 @@ void Game::render() {
     // Move cursor to top-left — no full clear, smoother motion
     cout << "\033[H";
     map->draw();
-    cout.flush(); // 🧼 Prevents flicker in Windows Terminal
+    cout.flush(); // Prevents flicker in Windows Terminal
 }
 
 bool Game::isGameOver() const {

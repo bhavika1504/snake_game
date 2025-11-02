@@ -110,3 +110,10 @@ Compatible Compilers: g++, clang, or MinGW
 Bhavika Mulani
 Developed for Intro to Programming coursework.
 Demonstrates strong application of object-oriented design, modular architecture, and interactive console UI in C++.
+
+# Optional Requirement
+Set PowerShell to use UTF-8
+Run this once per session before running your game:
+
+chcp 65001
+$OutputEncoding = [Console]::OutputEncoding = [System.Text.Encoding]::UTF8

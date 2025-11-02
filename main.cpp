@@ -8,7 +8,7 @@ using namespace std;
 
 int main() {
 #ifdef _WIN32
-    // Enable ANSI escape processing on Windows consoles (PowerShell / conhost / Windows Terminal)
+   
     HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
     if (hOut != INVALID_HANDLE_VALUE) {
         DWORD dwMode = 0;

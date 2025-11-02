@@ -20,7 +20,7 @@ SnakeMap::SnakeMap(int w, int h, Snake* s)
     // Default visuals
     snakeEmoji = "🟩";
     foodEmoji = "🍎";
-    powerEmoji = "💎";
+    powerEmoji = "🌟";
     emptyEmoji = "  ";
     powerSnakeEmoji = "🟨";
     borderEmoji = "⬜";
@@ -43,7 +43,7 @@ void SnakeMap::spawnFood() {
     } while (!ok);
     food = {x, y};
 
-    string foodOptions[] = {"🍎", "🍉", "🍌", "🍇", "🍒", "🍊", "🥕", "🌽"};
+    string foodOptions[] = {"🍎", "🍉", "🍌", "🍇", "🍒", "🍊"};
     foodEmoji = foodOptions[rand() % 8];
 }
 
@@ -134,7 +134,7 @@ void SnakeMap::draw() {
             } else if (food.first == i && food.second == j) {
                 frame << foodEmoji;
             } else if (powerFruitActive && powerFruit.first == i && powerFruit.second == j) {
-                frame << ((rand() % 2) ? "💎" : "💥");
+                frame << ((rand() % 2) ? "💎" : "🌟");
             } else {
                 bool printed = false;
                 for (auto& seg : snake->getBody()) {
