@@ -12,6 +12,8 @@ private:
     Input* input;
     bool gameOver;
     int gameSpeed;
+    bool paused;
+
 
 public:
     Game(int width, int height);

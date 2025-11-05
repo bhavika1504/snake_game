@@ -12,6 +12,7 @@ Game::Game(int width, int height)
     map = new SnakeMap(width, height, snake);
     input = new Input();
     input->init();
+    paused = false;
 
     cout << "\033[2J\033[H";
 }
@@ -26,16 +27,32 @@ Game::~Game() {
 void Game::run() {
     while (!gameOver) {
         processInput();
-        update();
-        render();
 
+        if (!paused) {
+            update();
+            render();
 
-        this_thread::sleep_for(chrono::milliseconds(gameSpeed));
+            // Control frame speed dynamically
+#ifdef _WIN32
+            Sleep(gameSpeed);
+#else
+            usleep(gameSpeed * 1000); 
+#endif
+        } else {
+            // If paused, just wait a little so CPU isn’t overloaded
+#ifdef _WIN32
+            Sleep(200);
+#else
+            usleep(200000);
+#endif
+        }
     }
 
+    // After loop ends (gameOver == true)
     cout << "\n💀 Game Over! Final Score: " << snake->getSize() - 1 << " 💀\n";
-    this_thread::sleep_for(chrono::seconds(2)); // Small pause before exit
+    this_thread::sleep_for(chrono::seconds(2)); // brief pause before exit
 }
+
 
 void Game::processInput() {
     char c = input->getInput();
@@ -64,6 +81,13 @@ void Game::processInput() {
         case 'q': case 'Q':
             gameOver = true;
             break;
+        case 'p': case 'P':
+            paused = !paused;
+            if (paused)
+                std::cout << "\n⏸ Game Paused — Press 'P' to Resume ⏯\n";
+            else
+                std::cout << "\n▶ Game Resumed!\n";
+            break;
 
         // Resize board
         case '+': case '=':
@@ -84,6 +108,7 @@ void Game::processInput() {
         case '3': map->setEmojiSize("large"); break;
         case '4': map->setEmojiSize("xlarge"); break;
         case '5': map->setEmojiSize("huge"); break;
+
 
         default:
             // no action

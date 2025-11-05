@@ -195,7 +195,7 @@ void SnakeMap::setEmojiSize(const string& size) {
         snakeEmoji = "🟩";
         borderEmoji = "🧱";
     } else if (size == "emoji") {
-        snakeEmoji = "🐍";
+        snakeEmoji = "🟢";
         borderEmoji = "⬜";
     }
 }
@@ -203,7 +203,7 @@ void SnakeMap::setEmojiSize(const string& size) {
 void SnakeMap::toggleEmojiMode() {
     emojiMode = !emojiMode;
     if (emojiMode) {
-        snakeEmoji = "🐍";
+        snakeEmoji = "🟢";
         borderEmoji = "⬜";
         modeMessage = "✨ Emoji Mode Activated! ✨";
     } else {
