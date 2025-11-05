@@ -43,8 +43,8 @@ void SnakeMap::spawnFood() {
     } while (!ok);
     food = {x, y};
 
-    string foodOptions[] = {"🍎", "🍉", "🍌", "🍇", "🍒", "🍊"};
-    foodEmoji = foodOptions[rand() % 6];
+    string foodOptions[] = {"🍎", "🍉", "🍌", "🍇", "🍒", "🍊","🥑"};
+    foodEmoji = foodOptions[rand() % 7];
 }
 
 void SnakeMap::spawnPowerFruit() {
