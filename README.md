@@ -17,6 +17,7 @@ S / ↓	Move Down
 A / ←	Move Left
 D / →	Move Right
 Q	Quit Game
+P/p Pause Game
 + / =	Increase Board Size
 - / _	Decrease Board Size
 1	Small Blocks
