@@ -180,23 +180,28 @@ void SnakeMap::resize(int newWidth, int newHeight) {
 
 void SnakeMap::setEmojiSize(const string& size) {
     if (size == "small") {
-        snakeEmoji = "▒▒";
-        borderEmoji = "##";
-    } else if (size == "medium") {
-        snakeEmoji = "▓▓";
-        borderEmoji = "██";
-    } else if (size == "large") {
-        snakeEmoji = "🟩";
-        borderEmoji = "⬜";
-    } else if (size == "xlarge") {
-        snakeEmoji = "🟩";
+        snakeEmoji = "░";     // small tile
+        borderEmoji = "▒"; 
+    } 
+    else if (size == "medium") {
+        snakeEmoji = "▒";     // thicker
+        borderEmoji = "▓";
+    } 
+    else if (size == "large") {
+        snakeEmoji = "█";     // BIG one-block tile ✅
+        borderEmoji = "▓";
+    } 
+    else if (size == "xlarge") {
+        snakeEmoji = "██";    // twice wide block
+        borderEmoji = "▓▓";
+    } 
+    else if (size == "huge") {
+        snakeEmoji = "████";  // super big
+        borderEmoji = "▓▓▓▓";
+    } 
+    else if (size == "emoji") {
+        snakeEmoji = "🟢";     // fun emoji mode
         borderEmoji = "⬛";
-    } else if (size == "huge") {
-        snakeEmoji = "🟩";
-        borderEmoji = "🧱";
-    } else if (size == "emoji") {
-        snakeEmoji = "🟢";
-        borderEmoji = "⬜";
     }
 }
 
