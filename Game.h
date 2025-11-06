@@ -15,6 +15,7 @@ private:
     bool paused;
 
 
+
 public:
     Game(int width, int height);
     ~Game();
