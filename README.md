@@ -12,20 +12,20 @@ Object-Oriented Design: Cleanly modularized codebase for clarity and scalability
 
 # 🎮 Controls
 Key	Action
-W / ↑	Move Up
-S / ↓	Move Down
-A / ←	Move Left
-D / →	Move Right
-Q	Quit Game
-P/p Pause Game
-+ / =	Increase Board Size
-- / _	Decrease Board Size
-1	Small Blocks
-2	Medium Blocks
-3	Large Blocks (Default)
-4	X-Large Blocks
-5	Huge Blocks
-E	Toggle Emoji Mode
+a. W / ↑	Move Up
+b. S / ↓	Move Down
+c. A / ←	Move Left
+d. D / →	Move Right
+e. Q	Quit Game
+f. P/p Pause Game
+g. + / =	Increase Board Size
+h. - / _	Decrease Board Size
+i. 1	Small Blocks
+j. 2	Medium Blocks
+k. 3	Large Blocks (Default)
+l. 4	X-Large Blocks
+m. 5	Huge Blocks
+n. E	Toggle Emoji Mode
 🚀 Building and Running
 Linux / macOS
 # Build
