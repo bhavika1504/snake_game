@@ -13,6 +13,7 @@ private:
     bool powerFruitActive;
     int powerFruitTimer;
     Snake* snake;
+    Snake* snake2;
     
     std::string snakeEmoji;
     std::string foodEmoji;
@@ -28,7 +29,7 @@ private:
     int messageTimer;
 
 public:
-    SnakeMap(int w, int h, Snake* s);
+    SnakeMap(int w, int h, Snake* s, Snake* s2);
     void spawnFood();
     void spawnPowerFruit();
     bool checkFood();
@@ -38,6 +39,7 @@ public:
     void clearScreen();
     int getWidth() const { return width; }
     int getHeight() const { return height; }
+    std::pair<int,int> getFood() const { return food; }
     
     // Dynamic board size
     void resize(int newWidth, int newHeight);
