@@ -10,10 +10,9 @@
 #endif
 using namespace std;
 
-SnakeMap::SnakeMap(int w, int h, Snake* s, Snake* s2)
-    : width(w), height(h),
+SnakeMap::SnakeMap(int w, int h, Snake* s)
+    : width(w), height(h), snake(s),
       powerFruitActive(false), powerFruitTimer(0),
-      snake(s), snake2(s2),
       emojiMode(false), messageTimer(0) {
 
     srand(static_cast<unsigned>(time(0)));
@@ -31,7 +30,7 @@ SnakeMap::SnakeMap(int w, int h, Snake* s, Snake* s2)
 }
 
 void SnakeMap::spawnFood() {
-    // avoid placing on either snake body
+    // avoid placing on snake body
     int x, y;
     bool ok;
     do {
@@ -40,11 +39,6 @@ void SnakeMap::spawnFood() {
         ok = true;
         for (auto &seg : snake->getBody()) {
             if (seg.first == x && seg.second == y) { ok = false; break; }
-        }
-        if (ok) {
-            for (auto &seg : snake2->getBody()) {
-                if (seg.first == x && seg.second == y) { ok = false; break; }
-            }
         }
     } while (!ok);
     food = {x, y};
@@ -63,11 +57,6 @@ void SnakeMap::spawnPowerFruit() {
         for (auto &seg : snake->getBody()) {
             if (seg.first == x && seg.second == y) { ok = false; break; }
         }
-        if (ok) {
-            for (auto &seg : snake2->getBody()) {
-                if (seg.first == x && seg.second == y) { ok = false; break; }
-            }
-        }
         if (x == food.first && y == food.second) ok = false;
     } while (!ok);
     powerFruit = {x, y};
@@ -76,21 +65,16 @@ void SnakeMap::spawnPowerFruit() {
 }
 
 bool SnakeMap::checkFood() {
-    auto head1 = snake->getHead();
-    auto head2 = snake2->getHead();
-    return ((head1.first == food.first && head1.second == food.second) ||
-            (head2.first == food.first && head2.second == food.second));
+    auto head = snake->getHead();
+    return (head.first == food.first && head.second == food.second);
 }
 
 bool SnakeMap::checkPowerFruit() {
     if (!powerFruitActive) return false;
-    auto head1 = snake->getHead();
-    auto head2 = snake2->getHead();
-    bool hit1 = (head1.first == powerFruit.first && head1.second == powerFruit.second);
-    bool hit2 = (head2.first == powerFruit.first && head2.second == powerFruit.second);
-    if (hit1 || hit2) {
-        if (hit1) snake->activatePower();
-        if (hit2) snake2->activatePower();
+    auto head = snake->getHead();
+    if (head.first == powerFruit.first && head.second == powerFruit.second) {
+        // activate power on snake, map will hide fruit
+        snake->activatePower();
         powerFruitActive = false;
 
         // in-game message for a short while
@@ -139,20 +123,13 @@ void SnakeMap::draw() {
     for (int i = 0; i < height; i++) {
         frame << borderEmoji;
         for (int j = 0; j < width; j++) {
-            auto head1 = snake->getHead();
-            auto head2 = snake2->getHead();
+            auto head = snake->getHead();
 
-            if (head1.first == i && head1.second == j) {
+            if (head.first == i && head.second == j) {
                 if (snake->isPowerActive()) {
                     frame << ((snake->getPowerTimeLeft() % 2 == 0) ? "🟦" : "🟨");
                 } else {
                     frame << snakeEmoji;
-                }
-            } else if (head2.first == i && head2.second == j) {
-                if (snake2->isPowerActive()) {
-                    frame << ((snake2->getPowerTimeLeft() % 2 == 0) ? "🟦" : "🟨");
-                } else {
-                    frame << "🟥";
                 }
             } else if (food.first == i && food.second == j) {
                 frame << foodEmoji;
@@ -167,15 +144,6 @@ void SnakeMap::draw() {
                         break;
                     }
                 }
-                if (!printed) {
-                    for (auto& seg : snake2->getBody()) {
-                        if (seg.first == i && seg.second == j) {
-                            frame << (snake2->isPowerActive() ? powerSnakeEmoji : "🟥");
-                            printed = true;
-                            break;
-                        }
-                    }
-                }
                 if (!printed) frame << emptyEmoji;
             }
         }
@@ -187,12 +155,10 @@ void SnakeMap::draw() {
     frame << "\n";
 
     // Game info
-    frame << "P1 (Arrow Keys): Score " << (int)snake->getBody().size() - 1;
+    frame << "Movement: WASD or Arrow Keys | Press 'E' for Emoji Mode\n";
+    frame << "Score: " << (int)snake->getBody().size() - 1;
     if (snake->isPowerActive())
         frame << " | ⚡ Invincible (" << snake->getPowerTimeLeft() << "s) ⚡";
-    frame << "  |  P2 (WASD): Score " << (int)snake2->getBody().size() - 1;
-    if (snake2->isPowerActive())
-        frame << " | ⚡ Invincible (" << snake2->getPowerTimeLeft() << "s) ⚡";
     frame << "\n";
 
     // Show temporary message (like emoji or invincible activation)

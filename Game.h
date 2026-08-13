@@ -8,9 +8,7 @@
 class Game {
 private:
     Snake* snake;
-    Snake* snake2;
     SnakeMap* map;
-    int loser;
     Input* input;
     bool gameOver;
     int gameSpeed;
