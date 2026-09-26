@@ -12,16 +12,24 @@
 #include <sys/time.h>
 #endif
 
-class Input {
+class IInput {
+public:
+    virtual ~IInput() = default;
+    virtual void init() = 0;
+    virtual void reset() = 0;
+    virtual char getInput() = 0;
+};
+
+class Input : public IInput {
 private:
 #ifndef _WIN32
     struct termios oldt, newt;
 #endif
 
 public:
-    void init();
-    void reset();
-    char getInput();
+    void init() override;
+    void reset() override;
+    char getInput() override;
 private:
     bool kbhit();
 };

@@ -11,15 +11,14 @@ private:
     Snake* snake2;
     SnakeMap* map;
     int loser;
-    Input* input;
+    IInput* input;
+    bool ownsInput;
     bool gameOver;
     int gameSpeed;
     bool paused;
 
-
-
 public:
-    Game(int width, int height);
+    Game(int width, int height, IInput* customInput = nullptr);
     ~Game();
     void run();
     void processInput();
@@ -27,6 +26,10 @@ public:
     void render();
     bool isGameOver() const;
     void setGameSpeed(int speed);
+    Snake* getSnake() const { return snake; }
+    Snake* getSnake2() const { return snake2; }
+    SnakeMap* getMap() const { return map; }
+    bool isPaused() const { return paused; }
 };
 
 #endif
