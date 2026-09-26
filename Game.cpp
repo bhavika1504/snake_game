@@ -9,12 +9,18 @@
 
 using namespace std;
 
-Game::Game(int width, int height) 
+Game::Game(int width, int height, IInput* customInput) 
     : loser(0), gameOver(false), gameSpeed(250) {
     snake = new Snake(height / 2, width / 2);
     snake2 = new Snake(height / 4, width / 4);
     map = new SnakeMap(width, height, snake, snake2);
-    input = new Input();
+    if (customInput) {
+        input = customInput;
+        ownsInput = false;
+    } else {
+        input = new Input();
+        ownsInput = true;
+    }
     input->init();
     paused = false;
 
@@ -26,7 +32,9 @@ Game::~Game() {
     delete snake;
     delete snake2;
     delete map;
-    delete input;
+    if (ownsInput) {
+        delete input;
+    }
 }
 
 void Game::run() {
